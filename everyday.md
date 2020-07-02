@@ -222,3 +222,140 @@ class Solution:
 ### 总结
 
 第一次做按照滑动窗口第一种解法实现, 滑动窗口基本理解, 样例较多, 遗漏情况较多
+
+
+
+## [378. 有序矩阵中第K小的元素](https://leetcode-cn.com/problems/kth-smallest-element-in-a-sorted-matrix/)  2020/07/02
+
+
+
+> 给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。
+> 请注意，它是排序后的第 k 小元素，而不是第 k 个不同的元素。
+>
+>  
+>
+> 示例：
+>
+> matrix = [
+>    [ 1,  5,  9],
+>    [10, 11, 13],
+>    [12, 13, 15]
+> ],
+> k = 8,
+>
+> 返回 13。
+>
+> 提示：
+> 你可以假设 k 的值永远是有效的，1 ≤ k ≤ n2 。
+
+
+
+### 暴力解法
+
+思路: 最暴力解法肯定是直接将矩阵展开成一维数组, 然后进行排序, 按照索引取值
+
+时间复杂度O(n)  对n2个数排序的时间, 应该不是O(n)
+
+空间复杂度O(n2)
+
+```python
+class Solution:
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        l = []
+        for i in matrix:
+            l.extend(i)
+        l.sort()
+        return l[k-1]
+```
+
+
+
+### 二分查找
+
+思路: 通过最小值(left)与最大值(right)找到中间值(mid), 然后计算出整个矩阵中小于中间值的数量num, 与k作比较, 若相同则得出结果, 若不同则根据大小继续二分查找
+
+
+
+时间复杂度O(n2 * log2n)
+
+空间复杂度O(1)
+
+```python
+class Solution:
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        left = matrix[0][0]
+        right = matrix[-1][-1]
+        while left < right:
+            mid = (left + right) // 2
+            num = 0
+            for i in matrix:
+                for j in i:
+                    if j <= mid:
+                        num += 1
+            if num < k:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+```
+
+
+
+在对比矩阵与mid耗时过多, 利用有序矩阵的性质进行优化
+
+从有序矩阵左下角开始走, 如果当前位置小于mid, 向右移一位, 如果大于mid, 向上移一位, 重复操作直到移出矩阵
+
+时间复杂度：O(nlog(r-l))，二分查找进行次数为 O(log(r−l))，每次操作时间复杂度为 O(n)
+
+空间复杂度：O(1)
+
+```python
+class Solution:
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        left = matrix[0][0]
+        right = matrix[-1][-1]
+        while left < right:
+            mid = (left + right) // 2
+            num = 0
+            i, j = len(matrix)-1, 0
+            while i >-1 and j <len(matrix):
+                if matrix[i][j] <= mid:
+                    num += i + 1
+                    j += 1
+                else:
+                    i -= 1
+            if num < k:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+```
+
+
+
+
+
+### 归并排序
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
