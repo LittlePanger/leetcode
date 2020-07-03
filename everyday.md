@@ -339,23 +339,74 @@ class Solution:
 
 
 
+## [108. 将有序数组转换为二叉搜索树](https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/)  2020/07/03
+
+> 将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。
+>
+> 本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+>
+> 示例:
+>
+> 给定有序数组: [-10,-3,0,5,9],
+>
+> 一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+>
+> ```
+>       0
+>      / \
+>    -3   9
+>    /   /
+>  -10  5
+> ```
 
 
 
+### 二分查找
+
+思路: 
+
+​		根据二叉搜索树的性质, 二叉搜索树的中序遍历是升序序列, 题目是根据升序序列转化为二叉搜索树, 即根据中序遍历逆推出二叉树. 只根据一个遍历能推出的二叉树不是唯一的, 示例中的数组能推出的二叉树(且高度平衡)如下
+
+```
+      0                        0                         0                       0
+     / \            	      / \                       / \                     / \
+   -3   9       	    -10  5                -10   9                -3   5
+   /   /          	         \      \                 \     /                 /        \
+ -10  5        	          -3    9               -3  5               -10      9
+```
+
+​		观察二叉树, 可以根据中位数作为二叉搜索树的根节点, 这样分给左右子树的数字个数相同或只相差1, 可以使树保持平衡.
+
+​		确定平衡二叉搜索树的根节点之后，其余的数字分别位于平衡二叉搜索树的左子树和右子树中，左子树和右子树分别也是平衡二叉搜索树，因此可以通过递归的方式创建平衡二叉搜索树.
+
+​		在给定中序遍历序列数组的情况下，每一个子树中的数字在数组中一定是连续的，因此可以通过数组下标范围确定子树包含的数字，下标范围记为 [left, rignt]。对于整个中序遍历序列，下标范围从 left=0到 right = nums.length−1。当 left>right 时，平衡二叉搜索树为空。
+
+以下三种方法中，方法一总是选择中间位置左边的数字作为根节点，方法二总是选择中间位置右边的数字作为根节点，方法三是方法一和方法二的结合，选择任意一个中间位置数字作为根节点。
 
 
 
+方法一：中序遍历，总是选择中间位置左边的数字作为根节点
 
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
 
+class Solution:
+    def sortedArrayToBST(self, nums: List[int]) -> TreeNode:
+        def tree(left, right):
+            if left > right:
+                return None
+            mid = (left + right) // 2
 
-
-
-
-
-
-
-
-
-
-
+            node = TreeNode()
+            node.val = nums[mid]
+            node.left = tree(left, mid - 1)
+            node.right = tree(mid + 1, right)
+            return node
+        return tree(0, len(nums) - 1)
+```
 
