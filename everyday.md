@@ -333,9 +333,7 @@ class Solution:
 
 
 
-
-
-### 归并排序
+### 归并排序(未实现)
 
 
 
@@ -387,6 +385,10 @@ class Solution:
 
 方法一：中序遍历，总是选择中间位置左边的数字作为根节点
 
+时间复杂度：O(n)，其中 n 是数组的长度。每个数字只访问一次。
+
+空间复杂度：O(logn)，其中 n 是数组的长度。空间复杂度不考虑返回值，因此空间复杂度主要取决于递归栈的深度，递归栈的深度是 O(logn)。
+
 ```python
 # Definition for a binary tree node.
 # class TreeNode:
@@ -409,4 +411,99 @@ class Solution:
             return node
         return tree(0, len(nums) - 1)
 ```
+
+
+
+## [63. 不同路径 II](https://leetcode-cn.com/problems/unique-paths-ii/)  2020/07/06
+
+> 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+>
+> 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+>
+> 现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+>
+> 
+>
+> 网格中的障碍物和空位置分别用 1 和 0 来表示。
+>
+> 说明：m 和 n 的值均不超过 100。
+>
+> 示例 1:
+>
+> 输入:
+> [
+>   [0,0,0],
+>   [0,1,0],
+>   [0,0,0]
+> ]
+> 输出: 2
+> 解释:
+> 3x3 网格的正中间有一个障碍物。
+> 从左上角到右下角一共有 2 条不同的路径：
+> 1. 向右 -> 向右 -> 向下 -> 向下
+> 2. 向下 -> 向下 -> 向右 -> 向右
+>
+
+
+
+### 动态规划
+
+思路 : 
+
+移动题目, 类似爬楼梯, 但是爬楼梯是一维的, 而本题是二维的
+
+由题意分析可得, 移动到当前方块的可能情况`dp[i][j] = dp[i][j-1] + dp[i-1][j]`, 即当前位置左侧和上面移动到当前位置的可能情况之和, 状态转移方程如下:
+$$
+dp[i][j]  = \begin{cases}{ dp[i][j-1] + dp[i-1][j]}  \quad \quad (i,j)无障碍物 \\0  \quad  \quad  \quad  \quad  \quad  \quad  \quad  \quad  \quad  \quad  \quad \quad (i,j)有障碍物 \end{cases}
+$$
+状态初始状态, 第一个位置只能有一种情况, 即 `dp[0][0] = 1`
+
+第一行的各个位置只等于其左边的可能数, 第一列同理, 只等于其上边的可能数
+
+
+
+时间复杂度O(nm)
+
+空间复杂度O(1)    直接将可能数存在了原数组中
+
+```python
+class Solution:
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+            for i in range(len(obstacleGrid)):
+                for j in range(len(obstacleGrid[0])):
+                    if obstacleGrid[i][j] == 0:
+                        if i == 0 and j == 0:
+                            obstacleGrid[i][j] = 1
+                        elif j > 0 and i > 0:
+                            obstacleGrid[i][j] = obstacleGrid[i][j - 1] + obstacleGrid[i - 1][j]
+                        elif j > 0:
+                            obstacleGrid[i][j] = obstacleGrid[i][j - 1]
+                        elif i > 0:
+                            obstacleGrid[i][j] = obstacleGrid[i - 1][j]
+                    else:
+                        obstacleGrid[i][j] = 0
+            return obstacleGrid[-1][-1]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
