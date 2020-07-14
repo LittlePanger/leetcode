@@ -878,13 +878,96 @@ class Solution:
 
 
 
+## [120. 三角形最小路径和](https://leetcode-cn.com/problems/triangle/)  2020/07/14
+
+> 给定一个三角形，找出自顶向下的最小路径和。每一步只能移动到下一行中相邻的结点上。
+>
+> 相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。
+>
+>  
+>
+> 例如，给定三角形：
+>
+> [
+>      [2],
+>     [3,4],
+>    [6,5,7],
+>   [4,1,8,3]
+> ]
+> 自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）。
+>
+>  
+>
+> 说明：
+>
+> 如果你可以只使用 O(n) 的额外空间（n 为三角形的总行数）来解决这个问题，那么你的算法会很加分。
+>
 
 
 
+### 动态规划 + 原地修改
+
+如果不原地修改, 空间复杂度则为O(n2)
+
+时间复杂度 O(n2)
+
+空间复杂度 O(1)
+
+```python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        for i in range(1, len(triangle)):
+            for t in range(len(triangle[i])):
+                if t == 0:
+                    # 数组的开头, 与上一层第一个相加
+                    triangle[i][t] = triangle[i-1][t] + triangle[i][t]
+                elif t == len(triangle[i]) - 1:
+                    # 数组的结尾, 与上一层最后一个相加
+                    triangle[i][t] = triangle[i-1][t-1] + triangle[i][t]
+                else:
+                    # 数组的非头非尾, 与上一层相邻的结点相加取最小值
+                    triangle[i][t] = min(triangle[i-1][t-1]+triangle[i][t],triangle[i-1][t]+triangle[i][t])
+        return min(triangle[-1])
+```
 
 
 
+### 动态规划 + O(n)空间
 
+时间复杂度 O(n2)
+
+空间复杂度 O(n)
+
+```python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        n = len(triangle)
+        l = [0] * n
+        l[0] = triangle[0][0]
+        for i in range(1, n):
+            # 从后面往前循环, 防止覆盖上一层数据导致无法计算
+            for t in range(len(triangle[i])-1,-1,-1):
+                if t == 0:
+                    # 数组的开头, 与上一层第一个相加
+                    l[0] = l[0] + triangle[i][t]
+                elif t == len(triangle[i]) - 1:
+                    # 数组的结尾, 与上一层最后一个相加
+                    l[t] = l[t-1] + triangle[i][t]
+                else:
+                    # 数组的非头非尾, 与上一层相邻的结点相加取最小值
+                    l[t] = min(l[t-1]+triangle[i][t], l[t]+triangle[i][t])
+        return min(l)
+```
+
+
+
+### 总结
+
+除了原地修改, 大多数的二维空间都可以优化为一维空间, 因为当前层数据只与上一层有关, 所以只需保留上一层数据, 再覆盖数据即可
+
+本题中优化空间需要从后往前循环, 防止覆盖上一层数据导致无法计算
+
+两种方法都是从上到下,也可以从下到上
 
 
 
