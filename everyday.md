@@ -971,6 +971,89 @@ class Solution:
 
 
 
+## 卡塔兰数   [96. 不同的二叉搜索树](https://leetcode-cn.com/problems/unique-binary-search-trees/)  2020/07/15
+
+> 给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
+>
+> 示例:
+>
+> 输入: 3
+> 输出: 5
+> 解释:
+> 给定 n = 3, 一共有 5 种不同结构的二叉搜索树:
+>
+>    1        3     3       2      1
+>     \       /      /        / \      \
+>      3     2     1      1   3      2
+>     /     /        \                       \
+>    2     1         2                      3
+
+
+
+### 动态规划
+
+n节点的树由n-1节点的树构成, 由此可见, 原题目可以分解成子问题, 且子问题的解是可以复用的, 故推断动态规划
+
+思路 :
+
+二叉搜索树的中序遍历是递增的有序数组, 所以将`i (1 <=i <= n)`作为根节点，那么小于`i`的数将出现在左子树，大于`i`的数出现在右子树，将左右子树的数目相乘，即为当根节点为`i`时的数量
+
+假设n个节点存在二叉排序树的个数是G(n)，令f(i)为以i为根的二叉搜索树的个数，则
+$$
+G(n) = f(1) + f(2) + f(3) + ... + f(n)
+$$
+当i为根节点时，其左子树节点个数为i-1个，右子树节点为n-i，则
+$$
+f(i) = G(i-1) * G(n-i)
+$$
+综合两个公式可以得到 [卡塔兰数](https://baike.baidu.com/item/catalan/7605685?fr=aladdin) 公式
+$$
+G(n) = G(0) * G(n-1) + G(1) * G(n-2) + ... + G(n-1) * G(0)
+$$
+
+
+时间复杂度 O(n2)
+
+空间复杂度 O(n)
+
+```python
+class Solution:
+    def numTrees(self, n: int) -> int:
+        G = [0]*(n+1)
+        G[0], G[1] = 1, 1
+
+        for i in range(2, n+1):
+            for j in range(1, i+1):
+                G[i] += G[j-1] * G[i-j]
+
+        return G[n]
+```
+
+
+
+### 数学方法
+
+[卡塔兰数推导步骤](https://www.cnblogs.com/zyt1253679098/p/9190217.html)
+$$
+C_0 = 1,C_{n+1} = \frac{2(2n+1)}{n+2}C_n
+$$
+时间复杂度 O(n)
+
+空间复杂度 O(1)
+
+```python
+class Solution:
+    def numTrees(self, n: int) -> int: 
+        C = 1
+        for i in range(n):
+            C = C * 2*(2*i+1)//(i+2)
+        return C
+```
+
+
+
+
+
 
 
 
