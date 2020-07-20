@@ -1052,17 +1052,140 @@ class Solution:
 
 
 
+## [35. 搜索插入位置](https://leetcode-cn.com/problems/search-insert-position/)  2020/07/16
+
+> 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+>
+> 你可以假设数组中无重复元素。
+>
+> 示例 1:
+>
+> 输入: [1,3,5,6], 5
+> 输出: 2
+> 示例 2:
+>
+> 输入: [1,3,5,6], 2
+> 输出: 1
+> 示例 3:
+>
+> 输入: [1,3,5,6], 7
+> 输出: 4
+> 示例 4:
+>
+> 输入: [1,3,5,6], 0
+> 输出: 0
+
+
+
+### 暴力
+
+直接返回比目标值小的数组的大小
+
+时间复杂度 O(N) 最坏情况目标值最大
+
+空间复杂度 O(N) 最坏情况目标值最大
+
+```python
+class Solution:
+    def searchInsert(self, nums: List[int], target: int) -> int:
+        return len([n for n in nums if n< target])
+```
+
+
+
+### 二分查找
+
+比较经典的二分查找法
+
+时间复杂度 O(log2N)
+
+空间复杂度 O(1)
+
+```python
+class Solution:
+    def searchInsert(self, nums: List[int], target: int) -> int:
+        left = 0
+        right = len(nums)
+        while left < right:
+            mid = (left + right) // 2
+            if nums[mid] < target:
+                left = mid + 1
+            elif nums[mid] == target:
+                return mid
+            else:
+                right = mid
+        return left
+```
+
+
+
+## [167. 两数之和 II - 输入有序数组](https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/)  2020/07/20
+
+> 给定一个已按照升序排列 的有序数组，找到两个数使得它们相加之和等于目标数。
+>
+> 函数应该返回这两个下标值 index1 和 index2，其中 index1 必须小于 index2。
+>
+> 说明:
+>
+> 返回的下标值（index1 和 index2）不是从零开始的。
+> 你可以假设每个输入只对应唯一的答案，而且你不可以重复使用相同的元素。
+> 示例:
+>
+> 输入: numbers = [2, 7, 11, 15], target = 9
+> 输出: [1,2]
+> 解释: 2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。
 
 
 
 
 
+### 双指针
+
+时间复杂度O(n)
+
+空间复杂度O(1)
+
+```python
+class Solution:
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        left = 0
+        right = len(numbers) -1 
+        while left < right:
+            if numbers[left] + numbers[right] > target:
+                right -= 1
+            elif numbers[left] + numbers[right] < target:
+                left += 1
+            else:
+                return [left+1,right +1]
+```
 
 
 
+### 二分查找
+
+时间复杂度O(nlogn).其中 n 是数组的长度。需要遍历数组一次确定第一个数，时间复杂度是 O(n)，寻找第二个数使用二分查找，时间复杂度是O(logn)，因此总时间复杂度是 O(nlogn)。
 
 
 
+空间复杂度O(1)
+
+```python
+class Solution:
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        n = len(numbers)
+        for i in range(n):
+            low, high = i + 1, n - 1
+            while low <= high:
+                mid = (low + high) // 2
+                if numbers[mid] == target - numbers[i]:
+                    return [i + 1, mid + 1]
+                elif numbers[mid] > target - numbers[i]:
+                    high = mid - 1
+                else:
+                    low = mid + 1
+        
+        return [-1, -1]
+```
 
 
 
