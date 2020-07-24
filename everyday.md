@@ -990,6 +990,14 @@ class Solution:
 
 
 
+二叉搜索树有以下几个特点：
+
+1. 左边的小于当前；
+2. 右边的大于当前；
+3. 没有重复的值。
+
+
+
 ### 动态规划
 
 n节点的树由n-1节点的树构成, 由此可见, 原题目可以分解成子问题, 且子问题的解是可以复用的, 故推断动态规划
@@ -1186,6 +1194,202 @@ class Solution:
         
         return [-1, -1]
 ```
+
+
+
+## [剑指 Offer 11. 旋转数组的最小数字](https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/)  2020/07/22
+
+同   [154. 寻找旋转排序数组中的最小值 II](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array-ii/)
+
+> 把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。  
+>
+> 示例 1：
+>
+> 输入：[3,4,5,1,2]
+> 输出：1
+> 示例 2：
+>
+> 输入：[2,2,2,0,1]
+> 输出：0
+
+
+
+### 二分查找
+
+思路: 
+
+- 若num[mid] > num[right] 则 num[:mid] > num[right] , 即 left = mid + 1
+- 若num[mid] < num[right] 则 num[mid : right-1] < num[right] , 即 right = mid
+- 若num[mid] = num[right] 则 不确定num[mid]在最小值左侧右侧, 所以不能直接忽略一部分元素,但是num[right]的替代品就是num[mid],(因为相同), 所以可以忽略掉num[right], 即 right -= 1
+
+
+
+```python
+class Solution:
+    def minArray(self, numbers: List[int]) -> int:
+        left = 0
+        right = len(numbers)-1
+        while left < right:
+            mid = (left + right)//2
+            if numbers[mid] > numbers[right]:
+                left = mid + 1
+            elif numbers[mid] < numbers[right]:
+                right = mid
+            else:
+                right -= 1 
+        return numbers[left]
+```
+
+
+
+
+
+## [64. 最小路径和](https://leetcode-cn.com/problems/minimum-path-sum/)  2020/07/23
+
+> 给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+>
+> 说明：每次只能向下或者向右移动一步。
+>
+> 示例:
+>
+> 输入:
+> [
+>   [1,3,1],
+>   [1,5,1],
+>   [4,2,1]
+> ]
+> 输出: 7
+> 解释: 因为路径 1→3→1→1→1 的总和最小。
+
+
+
+### 动态规划 + 原地修改
+
+时间复杂度O(MN)
+
+空间复杂度O(1)
+
+```python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if i == 0 and j != 0:
+                    grid[i][j] += grid[i][j-1]
+                elif i != 0 and j ==0:
+                    grid[i][j] += grid[i-1][j]
+                elif i != 0 and j !=0:
+                    grid[i][j] += min(grid[i-1][j],grid[i][j-1])
+        return grid[-1][-1]
+```
+
+
+
+### 动态规划 + O(N)空间
+
+时间复杂度O(MN)
+
+空间复杂度O(N)
+
+```python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        n = [0] * len(grid[0])
+        n[0] = grid[0][0]
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if i == 0 and j != 0:
+                    n[j] = grid[i][j] + n[j-1]
+                elif i != 0 and j ==0:
+                    n[j] = n[j] + grid[i][j]
+                elif i != 0 and j !=0:
+                    n[j] = min(grid[i][j] + n[j], grid[i][j] +n[j-1])
+        return n[-1]
+```
+
+
+
+## [1025. 除数博弈](https://leetcode-cn.com/problems/divisor-game/)  2020/07/24
+
+> 爱丽丝和鲍勃一起玩游戏，他们轮流行动。爱丽丝先手开局。
+>
+> 最初，黑板上有一个数字 N 。在每个玩家的回合，玩家需要执行以下操作：
+>
+> 选出任一 x，满足 0 < x < N 且 N % x == 0 。
+> 用 N - x 替换黑板上的数字 N 。
+> 如果玩家无法执行这些操作，就会输掉游戏。
+>
+> 只有在爱丽丝在游戏中取得胜利时才返回 True，否则返回 false。假设两个玩家都以最佳状态参与游戏。
+>
+>  
+>
+> 示例 1：
+>
+> 输入：2
+> 输出：true
+> 解释：爱丽丝选择 1，鲍勃无法进行操作。
+> 示例 2：
+>
+> 输入：3
+> 输出：false
+> 解释：爱丽丝选择 1，鲍勃也选择 1，然后爱丽丝无法进行操作。
+>
+>
+> 提示：
+>
+> 1 <= N <= 1000
+
+
+
+### 找规律
+
+基本思路：
+
+1. 最终结果应该是占到 2 的赢，占到 1 的输；
+2. 若当前为奇数，奇数的约数只能是奇数或者 1，因此下一个一定是偶数；
+3. 若当前为偶数， 偶数的约数可以是奇数可以是偶数也可以是 1，因此直接减 1，则下一个是奇数；
+4. 因此，奇则输，偶则赢。直接:
+
+
+
+```python
+class Solution:
+    def divisorGame(self, N: int) -> bool:
+        return N%2==0
+```
+
+
+
+### 动态规划
+
+基本思路：
+
+将所有的小于等于 N 的解都找出来，基于前面的，递推后面的。
+
+状态转移: 如果 i 的约数里面有存在为 False 的（即输掉的情况），则当前 i 应为 True；如果没有，则为 False。
+
+```python
+class Solution:
+    def divisorGame(self, N: int) -> bool:
+        target = [0 for i in range(N+1)]
+        target[1] = 0 #若爱丽丝抽到1，则爱丽丝输
+        if N<=1:
+            return False
+        else:
+        
+            target[2] = 1 #若爱丽丝抽到2，则爱丽丝赢
+            for i in range(3,N+1):
+                for j in range(1,i//2):
+                    # 若j是i的余数且target[i-j]为假（0）的话，则代表当前为真（1）
+                    if i%j==0 and target[i-j]==0:
+                        target[i] = 1
+                        break
+            return target[N]==1
+```
+
+
+
+
 
 
 
