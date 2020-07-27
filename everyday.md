@@ -1389,7 +1389,7 @@ class Solution:
 
 
 
-## [392. 判断子序列](https://leetcode-cn.com/problems/is-subsequence/)  2020/07/26
+## [392. 判断子序列](https://leetcode-cn.com/problems/is-subsequence/)  2020/07/27
 
 > 给定字符串 **s** 和 **t** ，判断 **s** 是否为 **t** 的子序列。
 >
