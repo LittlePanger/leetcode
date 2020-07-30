@@ -46,12 +46,6 @@ class Solution:
 
 
 
-### 总结
-
-暴力解法简单, 但是面试估计不会这么简单
-
-
-
 ------
 
 ## [剑指 Offer 09. 用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)  2020/06/30
@@ -219,9 +213,7 @@ class Solution:
 
 ### 动态规划(未实现)
 
-### 总结
 
-第一次做按照滑动窗口第一种解法实现, 滑动窗口基本理解, 样例较多, 遗漏情况较多
 
 
 
@@ -1171,11 +1163,11 @@ class Solution:
 
 ### 二分查找
 
-时间复杂度O(nlogn).其中 n 是数组的长度。需要遍历数组一次确定第一个数，时间复杂度是 O(n)，寻找第二个数使用二分查找，时间复杂度是O(logn)，因此总时间复杂度是 O(nlogn)。
+思路：按照顺序找第一个数，然后除去第一个数的区间内二分查找第二个数
 
+时间复杂度 O(nlogn).其中 n 是数组的长度。需要遍历数组一次确定第一个数，时间复杂度是 O(n)，寻找第二个数使用二分查找，时间复杂度是O(logn)，因此总时间复杂度是 O(nlogn)
 
-
-空间复杂度O(1)
+空间复杂度 O(1)
 
 ```python
 class Solution:
@@ -1461,21 +1453,120 @@ class Solution:
 
 
 
+## [104. 二叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)  2020/07/28
+
+> 给定一个二叉树，找出其最大深度。
+>
+> 二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+>
+> 说明: 叶子节点是指没有子节点的节点。
+>
+> 示例：
+> 给定二叉树 [3,9,20,null,null,15,7]，
+>
+> ​    3
+>
+>    / \
+>   9  20
+>     /  \
+>    15   7
+> 返回它的最大深度 3 。
 
 
 
+### 递归 + 自下而上
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        if root == None:
+            return 0
+        left = self.maxDepth(root.left)
+        right = self.maxDepth(root.right)
+        return max(left,right) + 1
+```
 
 
 
+### 递归 + 自上而下
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        def m(root, depth):
+            if root == None:
+                return depth        
+            return max(m(root.left,depth+1),m(root.right,depth+1))
+        return m(root,0)
+```
 
 
 
+## [343. 整数拆分](https://leetcode-cn.com/problems/integer-break/)  2020/08/30
+
+> 给定一个正整数 n，将其拆分为至少两个正整数的和，并使这些整数的乘积最大化。 返回你可以获得的最大乘积。
+>
+> 示例 1:
+>
+> 输入: 2
+> 输出: 1
+> 解释: 2 = 1 + 1, 1 × 1 = 1。
+> 示例 2:
+>
+> 输入: 10
+> 输出: 36
+> 解释: 10 = 3 + 3 + 4, 3 × 3 × 4 = 36。
+> 说明: 你可以假设 n 不小于 2 且不大于 58。
 
 
 
+### 动态规划
+
+第一次非常流畅解题, 思路很明确, 纪念一下
+
+```
+以10为例拆成, 而且只需要1+9不需要9+1
+1+9   时的最大值为1*9或1*拆9后乘积的最大值,后面同理
+2+8
+3+7
+4+6
+5+5
+由此可见,需要记录5-9的所有情况,因此用动态规划
+```
+
+时间复杂度 O((N2)/2)
+
+空间复杂度 O(N)
+
+```python
+class Solution:
+    def integerBreak(self, n: int) -> int:
+        dp = [0] * (n + 1)
+        for i in range(2, n + 1):
+            for j in range(1, i // 2 + 1):
+                dp[i] = max(dp[i], j * (i - j), j * dp[i - j])
+        return dp[-1]
+```
 
 
 
+### 优化后的动态规划和数学方法(不懂)
+
+见官方题解
 
 
 
