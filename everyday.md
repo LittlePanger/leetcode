@@ -1623,11 +1623,44 @@ class Solution:
 
 
 
+# 2020/08
+
+## [415. 字符串相加](https://leetcode-cn.com/problems/add-strings/)  2020/08/03
+
+> 给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。
+>
+> 注意：
+>
+> num1 和num2 的长度都小于 5100.
+> num1 和num2 都只包含数字 0-9.
+> num1 和num2 都不包含任何前导零。
+> 你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式。
 
 
 
+### 双指针
 
+当前位为除以10的余数, 进位为除以10的商, 将当前为不断添加到结果最前面, 若最后一次进位不为0,则证明结果比两加数都长一位, 则将进位加在前面
 
+时间复杂度 O(max(M,N))
+
+空间复杂度 O(1)
+
+```python
+class Solution:
+    def addStrings(self, num1: str, num2: str) -> str:
+        res = ''
+        n, m, jin = len(num1), len(num2), 0
+        while n>0 or m>0:
+            n -= 1
+            m -= 1
+            a = int(num1[n]) if n >=0 else 0
+            b = int(num2[m]) if m >=0 else 0
+            cur = (a+b+jin)%10
+            jin = (a+b+jin)//10
+            res = str(cur) +res
+        return str(jin)+res if jin !=0 else res
+```
 
 
 
