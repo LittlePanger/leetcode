@@ -1757,3 +1757,124 @@ class Solution:
 
 
 
+## [100. 相同的树](https://leetcode-cn.com/problems/same-tree/)   2020/08/07
+
+> 给定两个二叉树，编写一个函数来检验它们是否相同。
+>
+> 如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。
+>
+> 示例 1:
+>
+> 输入:       1         1
+>                 / \       / \
+>               2   3     2   3
+>
+>         [1,2,3],   [1,2,3]
+>
+> 输出: true
+> 示例 2:
+>
+> 输入:      1          1
+>                 /           \
+>                2             2
+>
+>         [1,2],     [1,null,2]
+>
+> 输出: false
+> 示例 3:
+>
+> 输入:       1         1
+>                 / \       / \
+>               2   1     1   2
+>
+>         [1,2,1],   [1,1,2]
+>
+> 输出: false
+>
+
+
+
+### 递归(深度优先遍历)
+
+时间复杂度：O(min(m,n))，其中 m 和 n 分别是两个二叉树的节点数。对两个二叉树同时进行深度优先搜索，只有当两个二叉树中的对应节点都不为空时才会访问到该节点，因此被访问到的节点数不会超过较小的二叉树的节点数。
+
+空间复杂度：O(min(m,n))，其中 m 和 n 分别是两个二叉树的节点数。空间复杂度取决于递归调用的层数，递归调用的层数不会超过较小的二叉树的最大高度，最坏情况下，二叉树的高度等于节点数。
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        def tree(i, j):
+            if i == None or j == None:
+                if i == j:
+                    return True
+                else:
+                    return False
+            else:
+                if i.val == j.val:
+                    if tree(i.left, j.left) and  tree(i.right, j.right):
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+        return tree(p,q)
+```
+
+### 代码优化
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        if p == q == None:
+            return True
+        elif p == None or q == None:
+            return False
+        elif p.val != q.val:
+            return False
+        else:
+            return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+        return isSameTree(p,q)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
