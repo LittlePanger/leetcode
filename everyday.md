@@ -1850,17 +1850,100 @@ class Solution:
 
 
 
+## [696. 计数二进制子串](https://leetcode-cn.com/problems/count-binary-substrings/)  2020/08/10
+
+> 给定一个字符串 s，计算具有相同数量0和1的非空(连续)子字符串的数量，并且这些子字符串中的所有0和所有1都是组合在一起的。
+>
+> 重复出现的子串要计算它们出现的次数。
+>
+> 示例 1 :
+>
+> 输入: "00110011"
+> 输出: 6
+> 解释: 有6个子串具有相同数量的连续1和0：“0011”，“01”，“1100”，“10”，“0011” 和 “01”。
+>
+> 请注意，一些重复出现的子串要计算它们出现的次数。
+>
+> 另外，“00110011”不是有效的子串，因为所有的0（和1）没有组合在一起。
+> 示例 2 :
+>
+> 输入: "10101"
+> 输出: 4
+> 解释: 有4个子串：“10”，“01”，“10”，“01”，它们具有相同数量的连续1和0。
+> 注意：
+>
+> s.length 在1到50,000之间。
+> s 只包含“0”或“1”字符。
 
 
 
+### 暴力(超时)
+
+两次遍历, 记录0和1出现的次数和改变的次数,如果出现次数相同则+1
+
+```python
+class Solution:
+    def countBinarySubstrings(self, s: str) -> int:
+        count = 0
+        for i in range(len(s)):
+            count_0 = 0
+            count_1 = 0
+            change = 0
+            if s[i] == '0':
+                count_0 += 1
+            elif s[i] == '1':
+                count_1 += 1
+            for j in range(i + 1, len(s)):
+                if s[j] != s[j - 1]:
+                    change += 1
+                else:
+                    if count_0 == count_1:
+                        break
+                if change == 2:
+                    break
+                if s[j] == '0':
+                    count_0 += 1
+                elif s[j] == '1':
+                    count_1 += 1
+            if count_0 == count_1:
+                count += 1
+        return count
+```
 
 
 
+### 一次循环
+
+通过对两个数连续出现次数取 `min` 就能得到这个子串中符合要求子串的数量
+
+以00011101举例 :
+
+1. 第一组000111, 0和1重复出现的次数都是3, 取最小值即为3
+2. 第二组1110, 1和0重复出现的次数是3和1, 取最小值即为1
+3. 第三组01, 1和0重复出现的次数都是1, 取最小值即为1
+4. 将上述最小值累加即为结果
 
 
 
+时间复杂度O(N)
 
+空间复杂度O(1)
 
+```python
+class Solution:
+    def countBinarySubstrings(self, s: str) -> int:
+        seq = [0, 1]  # seq[0]存储上一种值的出现次数, seq[1]存储当前这种值的出现次数
+        res = 0
+        for i in range(1, len(s)):
+            if s[i] == s[i-1]:
+                seq[1] += 1
+            else:
+                res += min(seq)
+                seq[0] = seq[1]
+                seq[1] = 1
+        res += min(seq)
+        return res
+```
 
 
 
