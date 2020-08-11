@@ -1947,7 +1947,87 @@ class Solution:
 
 
 
+## [130. 被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)  2020/08/11
 
+> 给定一个二维的矩阵，包含 'X' 和 'O'（字母 O）。
+>
+> 找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充。
+>
+> 示例:
+>
+> X X X X
+> X O O X
+> X X O X
+> X O X X
+> 运行你的函数后，矩阵变为：
+>
+> X X X X
+> X X X X
+> X X X X
+> X O X X
+> 解释:
+>
+> 被围绕的区间不会存在于边界上，换句话说，任何边界上的 'O' 都不会被填充为 'X'。 任何不在边界上，或不与边界上的 'O' 相连的 'O' 最终都会被填充为 'X'。如果两个元素在水平或垂直方向相邻，则称它们是“相连”的。
+>
+
+
+
+本题给定的矩阵中有三种元素：
+
+- 字母 X；
+- 被字母 X 包围的字母 O；
+- 没有被字母 X 包围的字母 O。
+
+本题要求将所有被字母 X 包围的字母 O都变为字母 X ，但很难判断哪些 O 是被包围的，哪些 O 不是被包围的。
+
+注意到题目解释中提到：任何边界上的 O 都不会被填充为 X。 所有的不被包围的 O 都直接或间接与边界上的 O 相连。可以利用这个性质判断 O 是否在边界上，具体地说：
+
+对于每一个边界上的 O，以它为起点，标记所有与它直接或间接相连的字母 O；
+最后遍历这个矩阵，对于每一个字母：
+
+- 如果该字母被标记过，则该字母为没有被字母 X 包围的字母 O，将其还原为字母 O
+- 如果该字母没有被标记过，则该字母为被字母 X 包围的字母 O，将其修改为字母 X
+
+
+
+### 深度优先搜索
+
+时间复杂度O(NM)
+
+空间复杂度O(NM)
+
+```python
+class Solution:
+    def solve(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        if not board:
+            return
+        row = len(board)
+        col = len(board[0])
+        def check(x, y):
+            if not 0 <= x < row or not 0 <= y < col or board[x][y] != 'O':
+                return
+            board[x][y]='A'
+            check(x-1,y)
+            check(x,y-1)
+            check(x+1,y)
+            check(x,y+1)
+            
+        for i in range(row):
+            check(i, 0)
+            check(i, col-1)
+        for j in range(col):
+            check(0, j)
+            check(row-1, j)
+        for i in range(row):
+            for j in range(col):
+                if board[i][j] == 'O':
+                    board[i][j] = 'X'
+                if board[i][j] == 'A':
+                    board[i][j] = 'O'
+```
 
 
 
